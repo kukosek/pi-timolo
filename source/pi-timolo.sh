@@ -37,8 +37,8 @@ if [ -z "$( pgrep -f $progname )" ]; then
     $progpath/$progname  >/dev/null 2>&1 &
     # NOTE set verbose = True in config.py then
     # then uncomment line below for logging
-    # echo "Start $progpath/$progname with log to $progpath/$proglog"
-    # python -u $progpath/$progname  > $progpath/$proglog &
+    echo "Start $progpath/$progname with log to $progpath/$proglog"
+    python3 -u $progpath/$progname  > $progpath/$proglog &
   fi
 else
   if [ "$1" = "stop" ]; then

@@ -11,6 +11,7 @@ progVer = "ver 11.52"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
+import subprocess
 warn_on = False   # Add short delay to review warning messages
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -1181,7 +1182,6 @@ def takeDayImage(filename, cam_sleep_time):
         else:
             camera.capture(filename)
         camera.close()
-
     if imageShowStream:    # Show motion area on full image to align camera
         showBox(filename)
 
@@ -1191,6 +1191,7 @@ def takeDayImage(filename, cam_sleep_time):
     if not showDateOnImage:
         logging.info("FilePath  %s", filename)
 
+    subprocess.call(['/home/pi/pi-timolo/rclone-tl-copy-remove.sh'])
 #------------------------------------------------------------------------------
 def getShut(pxAve):
     """
@@ -2077,9 +2078,46 @@ def videoRepeat():
             videoStartTime = datetime.datetime.now()
     logging.info("Exit: %i Videos Recorded in Folder %s",
                  videoCount, videoPath)
-
+#------------------------------------------------------------------------------
+def getTlNumFromRclone():
+    tryToDoIt=True
+    while tryToDoIt:
+        logging.info("TIMELAPSENUMUPDATE: Trying to update "+timelapseNumPath+" from most recent Rclone file")
+        rcloneLsLines = subprocess.run(timelapseListRcloneCmd.split(), stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+        i=0
+        while i < len(rcloneLsLines):
+            outputLine=rcloneLsLines[i]
+            if "error" in outputLine.lower():
+                logging.info("TIMELAPSENUMUPDATE: Rclone ls command encountered an error")
+                if timelapseListRcloneErrorResetNetworking:
+                    logging.info("TIMELAPSENUMUPDATE: Restarting networking")
+                    subprocess.run(["sudo", "-S", "service", "networking", "restart"],input=raspiSudoPassword)
+                if timelapseListRcloneErrorRetry:
+                    logging.info("TIMELAPSENUMUPDATE: Trying again in"+str(timelapseListRcloneErrorRetrySleep)+"seconds")
+                    time.sleep(timelapseListRcloneErrorRetrySleep)
+                else:
+                    tryToDoIt=False
+                break
+            if not timelapseListRcloneOutputSplit:
+                filename=outputLine
+            else:
+                filename=outputLine.split(timelapseListRcloneOutputSplit)[timelapseListRcloneOutputIndex]
+            if timelapsePrefix in filename and imageNamePrefix in filename and imageFormat in filename:
+                tlNumberStr = filename[len(timelapsePrefix+imageNamePrefix):-len(imageFormat)]
+                try:
+                    tlNumberStr=str(int(tlNumberStr)+1)
+                except ValueError:
+                    continue
+                f = open(timelapseNumPath, "w+")
+                f.write(tlNumberStr)
+                f.close()
+                logging.info("TIMELAPSENUMUPDATE: updated timelapse num to "+tlNumberStr)
+                tryToDoIt=False
+                break
+        if i==len(rcloneLsLines): tryToDoIt=False
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
+    if timelapseOn and timelapseNumGetFromRcloneRemote: getTlNumFromRclone()
     """ Initialization prior to launching appropriate pi-timolo options """
     logging.info("Testing if Pi Camera is in Use")
     # Test if the pi camera is already in use

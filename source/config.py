@@ -25,16 +25,16 @@ debug = False              # default= False True = debug mode returns pixel aver
 # Image Settings
 # --------------
 imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
-imageWidth = 1280          # default= 1024 Full Size Image Width in px
-imageHeight = 720          # default= 768  Full Size Image Height in px
+imageWidth = 2592         # default= 1024 Full Size Image Width in px
+imageHeight = 1944         # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
 imageJpegQuality = 95      # default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
-imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
+imageRotation = 180          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
 imageVFlip = True          # default= False True Flips image Vertically
 imageHFlip = True          # default= False True Flips image Horizontally
 imageGrayscale = False     # default= False True=Save image as grayscale False=Color
 imagePreview = False       # default= False True=Preview image on connected RPI Monitor or Display
-noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
+noNightShots = True        # default= False True=No Night Images (Motion or Timelapse)
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
 useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
 imageShowStream = False    # default= False True=Show video stream motion tracking area on full size image.
@@ -45,7 +45,7 @@ streamHeight = 240         # default= 240  Height of motion tracking stream dete
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
-showDateOnImage = True     # default= True False=Do Not display date/time text on images
+showDateOnImage = False     # default= True False=Do Not display date/time text on images
 showTextFontSize = 18      # default= 18 Size of image Font in pixel height
 showTextBottom = True      # default= True Bottom Location of image Text False= Top
 showTextWhite = True       # default= True White Colour of image Text False= Black
@@ -53,7 +53,7 @@ showTextWhiteNight = True  # default= True Changes night text to white.  Useful 
 
 # Low Light Twilight and Night Settings
 # -------------------------------------
-nightTwilightThreshold = 90 # default= 90 dayPixAve where twilight starts (framerate_range shutter)
+nightTwilightThreshold = 110 # default= 90 dayPixAve where twilight starts (framerate_range shutter)
 nightDarkThreshold = 50     # default= 50 dayPixAve where camera variable shutter long exposure starts
 nightBlackThreshold = 4     # default= 4  dayPixAve where almost no light so Max settings used
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
@@ -63,7 +63,7 @@ nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshol
 
 # Motion Track Settings
 # ---------------------
-motionTrackOn = True        # default= True True=Turns Motion Detect On, False=Off
+motionTrackOn = False       # default= True True=Turns Motion Detect On, False=Off
 motionTrackQuickPic = False # default= False True= save a frame image instead of switching out of opencv
 motionTrackInfo = True      # default= False Hide detailed track progress logging messages
 motionTrackTimeOut = 0.3    # default= 0.3 seconds Resets Track if no movement tracked
@@ -102,20 +102,28 @@ createLockFile = False      # default= False True= Create pi-timolo.sync file wh
 # Time Lapse Settings
 # -------------------
 timelapseOn = True          # default= False True=Turn timelapse On, False=Off
-timelapseDir = "media/timelapse" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
+timelapseDir = "/home/pi/timelapse" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
 timelapsePrefix = "tl-"     # default= "tl-" Prefix for All timelapse images with this prefix
 timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
-timelapseTimer = 300        # default= 300 (5 min) Seconds between timelapse images
+timelapseTimer = 600        # mine= 900 (15min) -  Seconds between timelapse images
 timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
+timelapseNumGetFromRcloneRemote = True
+timelapseListRcloneCmd = "rclone ls gdmedia:/Dokumenty/Papiry_HlavniDokumenty_Prezentace/GJP/Prirodopis/strom/timelapse/pic/"
+timelapseListRcloneOutputSplit=" "
+timelapseListRcloneOutputIndex=-1
+timelapseListRcloneErrorResetNetworking=True
+timelapseListRcloneErrorRetry=True
+timelapseListRcloneErrorRetrySleep=10
+raspiSudoPassword="raspberry"
 timelapseNumOn = True       # default= True filenames Sequenced by Number False=filenames by date/time
 timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
 timelapseNumStart = 1000    # default= 1000 Start of timelapse number sequence
-timelapseNumMax = 2000      # default= 2000 Max number of timelapse images desired. 0=Continuous
+timelapseNumMax = 0         # default= 2000 Max number of timelapse images desired. 0=Continuous
 timelapseExitSec = 0        # default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
 timelapseMaxFiles = 0       # default= 0 off or specify MaxFiles to maintain then oldest are deleted  default=0 (off)
 timelapseSubDirMaxFiles = 0 # default= 0 off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 timelapseSubDirMaxHours = 0 # default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
-timelapseRecentMax = 40     # default= 0 off or specify number of most recent files to save in timelapseRecentDir
+timelapseRecentMax = 0      # default= 0 off or specify number of most recent files to save in timelapseRecentDir
 timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelapse"  location of timelapseRecent files
 
 # Video Repeat Mode (suppresses Timelapse and Motion Settings)
@@ -145,7 +153,7 @@ spaceFileExt  = 'jpg'       # default= 'jpg' File extension to Delete Oldest Fil
 
 # Web Server settings
 # -------------------
-web_server_port = 8080        # default= 8080 Web server access port eg http://192.168.1.100:8080
+web_server_port = 80          # default= 8080 Web server access port eg http://192.168.1.100:8080
 web_server_root = "media"     # default= "media" webserver root path to webserver image/video sub-folders
 web_page_title = "PI-TIMOLO Media"  # web page title that browser shows
 web_page_refresh_on = True    # Refresh True=On (per seconds below) False=Off (never)

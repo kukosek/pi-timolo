@@ -108,7 +108,7 @@ timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequ
 timelapseTimer = 600        # mine= 900 (15min) -  Seconds between timelapse images
 timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseNumGetFromRcloneRemote = True
-timelapseListRcloneCmd = "rclone ls gdmedia:/Dokumenty/Papiry_HlavniDokumenty_Prezentace/GJP/Prirodopis/strom/timelapse/pic/"
+timelapseListRcloneCmd = "rclone ls yourremote:/path/to/tlpics/"
 timelapseListRcloneOutputSplit=" "
 timelapseListRcloneOutputIndex=-1
 timelapseListRcloneErrorResetNetworking=True

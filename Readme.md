@@ -1,3 +1,28 @@
+# fork by me
+I customized pi-timolo by Claude Pageau to suit my needs. I am making a long time timelapse (~1 year) of a tree in front of my house. I wanted to take a photo every 10 minutes that will be uploaded to google drive just after capturing it. I found pi-timolo, which didn't suit my needs perfectly, but it's written in python, so I can modify it pretty easily.
+## flashybrid
+I know SD card corruption is a thing on rpi, so I decided to write to the SD as little as possible. I set up flashybrid. This is a tool that makes your root filesystem a ramdisk, so all the log files and things wouldn't have to be written directly to the SD card. On shutdown, it syncs directories you selected to the SD card. You can also sync the files to SD with the command `sudo fh-sync`
+
+## changes
+* it works only with python3 cause i am using new functions like subprocess.run(). so make sure to set it up to work with python3. Follow the guide on the pi-timolo wiki.
+* `takeDayImage()` and `takeNightImage()` in _pi-timolo.py_
+  + The idea of pi-timolo remote directories is about adding an rclone script to cron, so it would run like every 10 mins. I didn't really like that, so I changed the code to run my rclone script after every timelapse capture.
+  + Script it would run is configurable in _config.py_, entry runScriptAfterCapture
+* new function `getTlNumFromRclone()` in _pi-timolo.py_
+  + I (happily quickly) realized that when the pi would have an power loss, the number of timelapse image wouldn't be synced to the SD card (remember i have flashybrid?). The bad thing that happens next is that it would start sending files with filenames that arleady are in the gdrive folder - rclone will of course replace them.
+  + I wrote a function that is ran at the start of main. It gets a list of files in the rclone directory (i know, it would be more efficent if it was just the newest file, but rclone doesn't have an option for that as far as I know) and extracts the timelapseNum from the newest (just alphabetically) filename. It also skips files that don't look like timelapse images. In case of an rclone error it just retries forever.
+  + Configuration of this feature in _config.py_:
+    - _timelapseNumGetFromRcloneRemote_ set to True/False if wanna to enable the whole functionality
+    - _timelapseListRcloneCmd_ the rclone command to get the list of files in your directory
+    - _timelapseListRcloneOutputSplit_ rclone ls outputs a line for every file. on the line are some information. the informations are splitted by a whitespace (" "). if it outputs just the filename, you can type False and skip the next option
+    - _timelapseListRcloneOutputIndex_ the filename is the last information on the line for me (-1)
+    - _timelapseListRcloneErrorResetNetworking_ whether (True/False) to reset networking in case of an rclone error. you must type your sudo password down here. that may create a security hole :{
+    - _timelapseListRcloneErrorRetry_ whether to retry the listing in case of an error
+    - _timelapseListRcloneErrorRetrySleep_ time in seconds to sleep before retrying
+    - _raspiSudoPassword_ your sudo password, in case _timelapseListRcloneErrorResetNetworking_ is True
+* new rclone script _rclone-tl-copy-remove.sh_ that copies the directory to remote then deletes all the local files except  the newest one for previewin. At next run the files that are not local should stay on the remote because it uses `rclone sync` instead of `rclone copy`
+* changed _pi-timolo.sh_ to run _pi-timoly.py_ with python3 instead of python2.7.
+* I don't know why but you can't start the program from the _menubox.sh_ script. so you must start it with the command `./pi-timolo.sh` in the folder where it is located 
 # PI-TIMOLO [![Mentioned in Awesome <INSERT LIST NAME>](https://awesome.re/mentioned-badge.svg)](https://github.com/thibmaek/awesome-raspberry-pi)
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight 
 ## For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)

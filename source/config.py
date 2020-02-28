@@ -18,9 +18,9 @@ pluginEnable = False       # default= False True reads customized settings from 
 pluginName = "shopcam"     # Specify filename in plugins subfolder without .py extension per below
                            # TLlong, TLshort, secfast, secstill, strmvid, secvid, secQTL, shopcam, dashcam, slowmo
 
-verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
-logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
-debug = False              # default= False True = debug mode returns pixel average data for tuning
+verbose = False           # default= True Sends logging Info to Console. False if running script as daeman
+logDataToFile = True      # default= False True logs diagnostic data to a disk file for review
+debug = False             # default= False True = debug mode returns pixel average data for tuning
 
 # Image Settings
 # --------------
@@ -39,6 +39,7 @@ noDayShots = False         # default= False True=No Day Images (Motion or Timela
 useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
 imageShowStream = False    # default= False True=Show video stream motion tracking area on full size image.
                            # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
+runScriptAfterCapture = "/home/pi/pi-timolo/rclone-tl-copy-remove.sh" # KUKOSEK script to be ran after taking an image. set to False if you don't want to run a script
 streamWidth = 320          # default= 320  Width of motion tracking stream detection area
 streamHeight = 240         # default= 240  Height of motion tracking stream detection area
 # Note see motionTrackFrameRate variable below to set motion video stream framerate for stream size above
@@ -108,7 +109,7 @@ timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequ
 timelapseTimer = 600        # mine= 900 (15min) -  Seconds between timelapse images
 timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseNumGetFromRcloneRemote = True
-timelapseListRcloneCmd = "rclone ls yourremote:/path/to/tlpics/"
+timelapseListRcloneCmd = "rclone ls gdmedia:/Dokumenty/Papiry_HlavniDokumenty_Prezentace/GJP/Prirodopis/strom/timelapse/pic/"
 timelapseListRcloneOutputSplit=" "
 timelapseListRcloneOutputIndex=-1
 timelapseListRcloneErrorResetNetworking=True

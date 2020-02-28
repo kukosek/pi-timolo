@@ -1190,8 +1190,12 @@ def takeDayImage(filename, cam_sleep_time):
     # showDateOnImage displays FilePath so avoid showing twice
     if not showDateOnImage:
         logging.info("FilePath  %s", filename)
-
-    subprocess.call(['/home/pi/pi-timolo/rclone-tl-copy-remove.sh'])
+    
+    if runScriptAfterCapture!=False:
+        if os.path.isfile(runScriptAfterCapture):
+            subprocess.call([runScriptAfterCapture])
+        else:
+            logging.error("Script to be run after taking an image, "+runScript+", doesn't exist")
 #------------------------------------------------------------------------------
 def getShut(pxAve):
     """
@@ -1263,6 +1267,11 @@ def takeNightImage(filename, pixelAve):
     if not showDateOnImage:
         logging.info("FilePath %s", filename)
 
+    if runScriptAfterCapture!=False:
+        if os.path.isfile(runScript):
+            subprocess.call([runScript])
+        else:
+            logging.error("Script to be run after taking an image, "+runScript+", doesn't exist")
 #------------------------------------------------------------------------------
 def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount,
                        currentDayMode, NumPath):
@@ -2088,7 +2097,7 @@ def getTlNumFromRclone():
         while i < len(rcloneLsLines):
             outputLine=rcloneLsLines[i]
             if "error" in outputLine.lower():
-                logging.info("TIMELAPSENUMUPDATE: Rclone ls command encountered an error")
+                logging.error("TIMELAPSENUMUPDATE: Rclone ls command encountered an error")
                 if timelapseListRcloneErrorResetNetworking:
                     logging.info("TIMELAPSENUMUPDATE: Restarting networking")
                     subprocess.run(["sudo", "-S", "service", "networking", "restart"],input=raspiSudoPassword)
@@ -2107,6 +2116,7 @@ def getTlNumFromRclone():
                 try:
                     tlNumberStr=str(int(tlNumberStr)+1)
                 except ValueError:
+                    logging.debug("TIMELAPSENUMUPDATE: couldn't extract num from filename "+filename)
                     continue
                 f = open(timelapseNumPath, "w+")
                 f.write(tlNumberStr)

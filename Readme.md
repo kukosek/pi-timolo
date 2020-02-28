@@ -20,7 +20,7 @@ I know SD card corruption is a thing on rpi, so I decided to write to the SD as 
     - _timelapseListRcloneErrorRetry_ whether to retry the listing in case of an error
     - _timelapseListRcloneErrorRetrySleep_ time in seconds to sleep before retrying
     - _raspiSudoPassword_ your sudo password, in case _timelapseListRcloneErrorResetNetworking_ is True
-* new rclone script _rclone-tl-copy-remove.sh_ that copies the directory to remote then deletes all the local files except  the newest one for previewin. At next run the files that are not local should stay on the remote because it uses `rclone sync` instead of `rclone copy`
+* new rclone script _rclone-tl-copy-remove.sh_ that copies the directory to remote then deletes all the local files except  the newest one for previewin. At next run the files that are not local should stay on the remote because it uses `rclone copy` instead of `rclone sync`
 * changed _pi-timolo.sh_ to run _pi-timoly.py_ with python3 instead of python2.7.
 * I don't know why but you can't start the program from the _menubox.sh_ script. so you must start it with the command `./pi-timolo.sh start` in the folder where it is located 
 # PI-TIMOLO [![Mentioned in Awesome <INSERT LIST NAME>](https://awesome.re/mentioned-badge.svg)](https://github.com/thibmaek/awesome-raspberry-pi)
